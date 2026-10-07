@@ -1,0 +1,79 @@
+<!doctype html>
+<!--
+  ============================================================
+  PORTAIL DU LYCÉE — ressources personnalisées
+  ============================================================
+  Cette page regarde QUI est connecté (défini à la connexion),
+  retrouve la personne dans users.js, et affiche SES cours à elle.
+  Si personne n'est connecté -> retour à la page de connexion.
+  ============================================================
+-->
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Portail — Mes cours</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <!-- LOGO en haut à gauche -->
+  <div class="logo-corner"></div>
+
+  <div class="resources">
+    <h1 id="title">Mes <span>cours</span></h1>
+    <p class="intro" id="intro"></p>
+
+    <!-- Les cours de l'élève s'ajoutent ici, tout seuls, via le JS -->
+    <div class="grid" id="courses"></div>
+
+    <!-- Se déconnecter = oublier qui est connecté + retour à l'entrée -->
+    <a class="logout" href="#" id="logout">← Se déconnecter</a>
+  </div>
+
+  <!-- 1) La liste des élèves -->
+  <script src="users.js"></script>
+  <!-- 2) L'affichage personnalisé -->
+  <script>
+    // Qui est connecté ? (défini à la connexion)
+    let user = null;
+    try {
+      const uname = sessionStorage.getItem("portail_user");
+      user = USERS.find(function (u) { return u.username === uname; }) || null;
+    } catch (e) { /* stockage indisponible */ }
+
+    // Personne de connecté -> on renvoie vers la connexion
+    if (!user) {
+      window.location.href = "index.html";
+    } else {
+      // Accueil personnalisé
+      document.getElementById("intro").textContent =
+        "Salut " + user.name + " ! Voici tes cours, rien que les tiens.";
+
+      // On construit une "carte-lien" par cours de CET élève
+      const grid = document.getElementById("courses");
+      user.courses.forEach(function (course) {
+        const a = document.createElement("a");
+        a.className = "card-link";
+        a.href = course.link;
+        a.target = "_blank";
+        a.rel = "noopener";
+        a.innerHTML =
+          '<span class="dot"></span>' +
+          '<span class="label"></span>' +
+          '<span class="arrow">→</span>';
+        // on met le texte via textContent (plus sûr que innerHTML)
+        a.querySelector(".label").textContent = course.label;
+        grid.appendChild(a);
+      });
+    }
+
+    // Déconnexion
+    document.getElementById("logout").addEventListener("click", function (e) {
+      e.preventDefault();
+      try { sessionStorage.removeItem("portail_user"); } catch (err) {}
+      window.location.href = "index.html";
+    });
+  </script>
+</body>
+</html>
